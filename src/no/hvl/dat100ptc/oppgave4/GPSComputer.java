@@ -26,74 +26,130 @@ public class GPSComputer {
 		return this.gpspoints;
 	}
 	
-	// beregn total distances (i meter)
 	public double totalDistance() {
 
 		double distance = 0;
+		int i = 1;
+		GPSPoint point1, point2;
+		
+  if(gpspoints.length > 1) {
+	  
+	while (i < gpspoints.length) {
+		
+		point1 = gpspoints[i-1];
+		point2 = gpspoints[i];
+		
+		distance += GPSUtils.distance(point1, point2);		
+		i++;
+	 }
+  }	else distance = 0;	
+  
+	return distance;	
+	
+ }
 
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUTT
-
-	}
-
-	// beregn totale høydemeter (i meter)
+	
 	public double totalElevation() {
 
 		double elevation = 0;
+		int i = 1;
 
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUTT
-
+	GPSPoint point1, point2;	
+	
+	if (gpspoints.length > 1) {
+	
+		while(i<gpspoints.length) {
+			
+	    point1 = gpspoints[i-1];
+	    point2 = gpspoints[i];
+	
+	    double ele1 = point1.getElevation();
+	    double ele2 = point2.getElevation();
+	    
+	    if (ele1<ele2) { elevation += ele2-ele1; }
+	    i++;    
+		}
 	}
+	
+	return elevation;
+	
+  }
 
-	// beregn total tiden for hele turen (i sekunder)
+	
 	public int totalTime() {
-
-		throw new UnsupportedOperationException(TODO.method());
-
-	}
+	
+	int i = 1;
 		
-	// beregn gjennomsnitshastighets mellom hver av gps punktene
+	int totalTid = 0;
+	
+	if(gpspoints.length > 1) {
+		
+		while(i<gpspoints.length) {
+		
+		totalTid += gpspoints[i].getTime() - gpspoints[i-1].getTime();
+		
+		i++;
+		}	
+	}
+         return totalTid;
+ }
+		
 
 	public double[] speeds() {
 		
-		// TODO - START		// OPPGAVE - START
+    double[] speeds = new double[gpspoints.length-1];
+    
+    int i = 1;
+    
+    if (gpspoints.length > 1) {
+    	
+       while (i<gpspoints.length) {	
+    	   
+       speeds[i-1] = GPSUtils.speed(gpspoints[i-1], gpspoints[i]);   
+       
+       i++;	   
+       }
+    	
+    }
 		
-		throw new UnsupportedOperationException(TODO.method());
+	return speeds;	
 
-		// TODO - SLUTT
-
-	}
+  }
 	
 	public double maxSpeed() {
 		
+		
 		double maxspeed = 0;
+		int i = 1;
+		GPSPoint point1, point2;
 		
-		// TODO - START
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO - SLUTT
-		
+		if (gpspoints.length > 1) {	
+			
+		   while (i<gpspoints.length) {	
+			
+			point1 = gpspoints[i-1];
+			point2 = gpspoints[i];
+			
+		      if (maxspeed < GPSUtils.speed(point1, point2)) {	
+		    	  maxspeed = GPSUtils.speed(point1, point2);		    	  
+		      }
+			i++;
+		   }
+					
+		 }
+		return maxspeed;		
 	}
 
 	public double averageSpeed() {
-
+		
 		double average = 0;
+		double distance = totalDistance();
+		double time = totalTime();
 		
-		// TODO - START
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO - SLUTT
-		
-	}
+		average = (distance / time) * 3.6;
+        
+		return average;
+}
 
 	/*
 	 * bicycling, <10 mph, leisure, to work or for pleasure 4.0 bicycling,
@@ -115,39 +171,60 @@ public class GPSComputer {
 		// MET: Metabolic equivalent of task angir (kcal x kg-1 x h-1)
 		double met = 0;		
 		double speedmph = speed * MS;
+		double timer = secs / 3600.0;
 
-		// TODO - START
-		
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUTT
-		
+	    if (speedmph < 10) {met = 4.0;}
+	    else if (speedmph <= 12 && speedmph >= 10) {met = 6.0;}
+	    else if (speedmph <= 14 && speedmph > 12) {met = 8.0;}
+	    else if (speedmph <= 16 && speedmph > 14) {met = 10.0;}
+	    else if (speedmph <= 20 && speedmph > 16) {met = 12.0;}
+	    else if (speedmph > 20) {met = 16.0;}
+	    	    
+	    kcal = met * weight * timer;
+	    
+	    return kcal;
+	    
 	}
 
 	public double totalKcal(double weight) {
 
-		double totalkcal = 0;
-
-		// TODO - START
+		double total = 0;
+	    
+	    double vekt = weight;
+		 
+		double averageSpeed = averageSpeed();
+		int time = totalTime();
 		
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUTT
+		total = kcal(vekt, time, averageSpeed);
+		
+			   	
+        return total;
 		
 	}
 	
 	private static double WEIGHT = 80.0;
 	
 	public void displayStatistics() {
-
-		System.out.println("==============================================");
-
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
 		
-		// TODO - SLUTT
-		
+	   String time = GPSUtils.formatTime(totalTime());
+	   double km = totalDistance()/1000.0;
+	   
+	   String strKm = String.format("%.2f", km);
+	   String strEle = String.format("%.2f", totalElevation());
+	   String strMspeed = String.format("%.2f", maxSpeed());
+	   String strAvspeed = String.format("%.2f", averageSpeed());
+	   String strKcal = String.format("%.2f", totalKcal(WEIGHT));
+	   
+
+	   System.out.println("==============================================\n"
+			              +"Total time     :     "+ time + "\n"
+			              +"Total distance :     "+ strKm + " km\n"
+			              +"Total elevation:     "+ strEle + " m\n"
+			              +"Max speed      :     "+ strMspeed + " km/t\n"
+			              +"Average speed  :     "+ strAvspeed + "km/t\n"
+			              +"Energy         :     "+ strKcal + " kcal\n"
+			              +"==============================================\n");
+			   			            	  
 	}
 
 }

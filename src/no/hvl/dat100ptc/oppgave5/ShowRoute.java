@@ -55,21 +55,48 @@ public class ShowRoute extends EasyGraphics {
 	
 		double ystep;
 		
-		// TODO - START
-		
-		throw new UnsupportedOperationException(TODO.method());
+		double maxlat = GPSUtils.findMax(GPSUtils.getLatitudes(gpspoints));
+		double minlat = GPSUtils.findMin(GPSUtils.getLatitudes(gpspoints));
 
-		// TODO - SLUTT
+		ystep = MAPYSIZE / (Math.abs(maxlat - minlat)); 
+
+		return ystep;
 		
 	}
 
 	public void showRouteMap(int ybase) {
 
-		// TODO - START
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO - SLUTT
+    setColor(0,255,0);
+    
+    final int RADIUS = 5;
+    
+    int i = 0, x = 0, y = 0;
+    double la = 0, lo = 0, la2 = 0, lo2 = 0;
+    
+    double maxlat = GPSUtils.findMax(GPSUtils.getLatitudes(gpspoints));
+    double maxlon = GPSUtils.findMax(GPSUtils.getLongitudes(gpspoints));
+       
+    while(i<gpspoints.length) {
+    	
+    la = maxlat - gpspoints[i].getLatitude();  
+    lo = maxlon - gpspoints[i].getLongitude();
+    		   
+    la2 = la * ystep();
+    lo2 = lo * xstep();
+    
+    y = (int)la2 + ybase - MAPYSIZE;
+    x = MAPXSIZE - (int)lo2; 
+    
+    System.out.println("x: " + (int)lo2);   
+    System.out.println((int)la2);	  	
+     
+    setColor(0,255,0);
+    fillCircle(x, y, RADIUS);
+
+    i++;
+    
+    }
+   	
 	}
 
 	public void showStatistics() {
@@ -79,11 +106,23 @@ public class ShowRoute extends EasyGraphics {
 		setColor(0,0,0);
 		setFont("Courier",12);
 		
-		// TODO - START
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO - SLUTT;
+		 String time = GPSUtils.formatTime(gpscomputer.totalTime());
+		   double km = gpscomputer.totalDistance()/1000.0;
+		   
+		   String strKm = String.format("%.2f", km);
+		   String strEle = String.format("%.2f", gpscomputer.totalElevation());
+		   String strMspeed = String.format("%.2f", gpscomputer.maxSpeed());
+		   String strAvspeed = String.format("%.2f", gpscomputer.averageSpeed());
+		   String strKcal = String.format("%.2f", gpscomputer.totalKcal(80));
+		   		 
+		   drawString("Total time           :    "+ time, 10,TEXTDISTANCE);
+		   drawString("Total distance    :     "+ strKm + " km", 10,TEXTDISTANCE*2);
+		   drawString("Total elevation   :     "+ strEle + " m", 10,TEXTDISTANCE*3);
+		   drawString("Max speed         :     "+ strMspeed+ " km/t",10,TEXTDISTANCE*4);
+		   drawString("Average speed  :     "+ strAvspeed+ " km/t",10,TEXTDISTANCE*5);
+		   drawString("Energy               :     "+ strKcal+ " kcal",10,TEXTDISTANCE*6);
+				              
+			
 	}
 
 }

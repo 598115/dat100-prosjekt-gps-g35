@@ -10,31 +10,32 @@ public class GPSDataConverter {
 	// Eksempel - tidsinformasjon (som String): 2017-08-13T08:52:26.000Z
     // skal omregnes til sekunder (som int): 8 * 60 * 60 + 52 * 60 + 26 
 	
-	private static int TIME_STARTINDEX = 11; // posisjon for start av tidspunkt i timestr
+	private static int TIME_STARTINDEX = 11; 
 
 	public static int toSeconds(String timestr) {
 		
-		int secs;
-		int hr, min, sec;
+		int secs = 0;
+		int hr = 0, min = 0, sec = 0;
 		
-		// TODO
-		// OPPGAVE - START
-		
-		throw new UnsupportedOperationException(TODO.method());
-
-		// OPPGAVE - SLUTT
+	hr = Integer.parseInt(timestr.substring(11, 13));
+	min = Integer.parseInt(timestr.substring(14, 16));
+	sec = Integer.parseInt(timestr.substring(17, 19));
+	
+	secs = (hr*60*60) + (min*60) + sec;
+	return secs;
 		
 	}
 
 	public static GPSPoint convert(String timeStr, String latitudeStr, String longitudeStr, String elevationStr) {
-
-		GPSPoint gpspoint;
-
-		// TODO - START ;
+   
+	int time = toSeconds(timeStr);	
 		
-		throw new UnsupportedOperationException(TODO.method());
+	double latitude = Double.parseDouble(latitudeStr), longitude = Double.parseDouble(longitudeStr);
+	double elevation = Double.parseDouble(elevationStr);
+		
+    GPSPoint gpspoint = new GPSPoint(time, latitude, longitude, elevation);
 
-		// OPPGAVE - SLUTT ;
+	return gpspoint;	
 	    
 	}
 	

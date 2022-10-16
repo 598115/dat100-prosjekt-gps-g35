@@ -4,6 +4,7 @@ import static java.lang.Math.*;
 
 import no.hvl.dat100ptc.TODO;
 import no.hvl.dat100ptc.oppgave1.GPSPoint;
+import no.hvl.dat100ptc.oppgave2.GPSDataConverter;
 
 public class GPSUtils {
 
@@ -25,31 +26,47 @@ public class GPSUtils {
 	public static double findMin(double[] da) {
 
 		double min;
-
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUT
-
+		
+		min = da[0];
+	
+	for (double d : da) {
+		if (d < min) {
+			min = d;
+		}
 	}
+	
+        return min;
+}
 
 	public static double[] getLatitudes(GPSPoint[] gpspoints) {
 
-		// TODO - START
+		double[] latitudes = new double[gpspoints.length];
 		
-		throw new UnsupportedOperationException(TODO.method());
+		for (int i=0; i<gpspoints.length; i++) {
+			
+		GPSPoint point = gpspoints[i];
+		double lati = point.getLatitude();
+		latitudes[i] = lati;
+			
+		}
 		
-		// TODO - SLUTT
+		return latitudes;
+
 	}
 
 	public static double[] getLongitudes(GPSPoint[] gpspoints) {
 
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
+        double[] longitudes = new double[gpspoints.length];
 		
-		// TODO - SLUTT
+		for (int i=0; i<gpspoints.length; i++) {
+			
+		GPSPoint point = gpspoints[i];
+		double longi = point.getLongitude();
+		longitudes[i] = longi;
+			
+		}
+
+        return longitudes;
 
 	}
 
@@ -57,14 +74,23 @@ public class GPSUtils {
 
 	public static double distance(GPSPoint gpspoint1, GPSPoint gpspoint2) {
 
-		double d;
-		double latitude1, longitude1, latitude2, longitude2;
-
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUTT
+		double a, c, d;
+		       
+		double latitude1 = Math.toRadians(gpspoint1.getLatitude()), longitude1 = Math.toRadians(gpspoint1.getLongitude());
+		double latitude2 = Math.toRadians(gpspoint2.getLatitude()), longitude2 = Math.toRadians(gpspoint2.getLongitude());
+		
+		double latitudeDiff = latitude2-latitude1;
+		double longitudeDiff = longitude2-longitude1; 
+		
+		a = (Math.sin(latitudeDiff / 2) * (Math.sin(latitudeDiff / 2)) +				
+		(Math.cos(latitude1) * Math.cos(latitude2)) *				
+		(Math.sin(longitudeDiff)/2) * Math.sin(longitudeDiff/2));
+			
+		c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+		
+		d = R * c;
+		
+		return d;			
 
 	}
 
@@ -72,12 +98,14 @@ public class GPSUtils {
 
 		int secs;
 		double speed;
+		
+		secs = (gpspoint2.getTime()) - (gpspoint1.getTime());
 
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUTT
+		double MeterPerSekund = (distance(gpspoint1, gpspoint2) / secs);
+         
+		speed = MeterPerSekund * 3.6;
+		
+		return speed;		
 
 	}
 
@@ -85,12 +113,18 @@ public class GPSUtils {
 
 		String timestr;
 		String TIMESEP = ":";
-
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
 		
-		// TODO - SLUTT
+		int timer, minutter, sekunder;
+
+		timer = secs / 3600;
+		    
+		minutter = (secs % 3600) / 60;
+		    
+		sekunder = secs - minutter*60 - timer * 3600;
+		
+		timestr = String.format("  %02d%s%02d%s%02d", timer, TIMESEP, minutter, TIMESEP, sekunder);
+		
+		return timestr;
 
 	}
 	private static int TEXTWIDTH = 10;
@@ -99,11 +133,12 @@ public class GPSUtils {
 
 		String str;
 
-		// TODO - START
-
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUTT
+	      int i = (int) ((d+0.005) * 100);   
+		  double dAv = (double)i / 100;	
+		
+		str = String.format("%" + TEXTWIDTH + ".2f", dAv);
+		
+	return str;
 		
 	}
 }
